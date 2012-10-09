@@ -1,0 +1,13 @@
+SECTIONS
+{
+	bootloader 0x07c0:
+	{
+		build/bootloader.o *(.text)
+	}
+
+	kernel	0x0a00:
+	{
+		build/kernel.o *(.text)
+	}
+}
+
