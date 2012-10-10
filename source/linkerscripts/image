@@ -1,11 +1,11 @@
 SECTIONS
 {
-	bootloader 0x07c0:
+	bootloader 0x7c00:
 	{
 		build/bootloader.o *(.text)
 	}
 
-	kernel	0x0a00:
+	kernel	0x8000:
 	{
 		build/kernel.o *(.text)
 	}

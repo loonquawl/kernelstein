@@ -3,7 +3,7 @@ CC = gcc
 
 sourcedir	= source
 builddir	= build
-kernelopts	= -nostdlib -nodefaultlibs -m32
+kernelopts	= -nostdlib -nodefaultlibs -m32 -fno-builtin
 ldoptsbin	= --oformat binary --nostdlib
 
 all: image.bin
@@ -23,7 +23,5 @@ clean:
 image.bin: bootloader.o kernel.o
 	$(LD) $(ldoptsbin) -T $(sourcedir)/linkerscripts/image -o $(builddir)/image.bin
 
-simulate: $(builddir)/image.bin
-	qemu -s $(builddir)/image.bin &
-	gdb -x misc/gdbstartup
-	killall qemu
+simulate: image.bin
+	qemu -s $(builddir)/image.bin
