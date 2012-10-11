@@ -76,18 +76,25 @@ memmaploop:
 
 ; protected mode
 	cli
-	lgdt [gdtr]
+	lgdt [gdt0]
 	mov eax, cr0
 	or al, 1
 	mov cr0, eax
+	jmp 0x8:initsegments
 
 [bits 32]
+align 32
+initsegments:
 
-	jmp 0x8:test
-	jmp 0x8:STAGE2_PHYSADDR
+	mov eax, 8
+	mov ds, eax
+	mov ss, eax
+	mov es, eax
+	mov fs, eax
 
-test:
 	hlt
+
+	jmp 0x8:STAGE2_PHYSADDR
 
 [bits 16]
 
@@ -219,8 +226,6 @@ clearloop:
 	ret
 
 ; GDT data
-gdtr:
-	dw	gdt0
 gdt0:
 	dw	gdtend-gdt0
 	dd	gdt0	
@@ -245,7 +250,7 @@ istruc GDT_entry
 iend
 gdtend:
 
-loadingstr		db	"Yo mon! Loading stage2...",10,0
+loadingstr		db	"ABCDEF",10,0
 memmapstartstr		db	"Memory map:",10,"Base             | Length           | Type",10,0
 memmapentrystr		db	"% | % | %",10,0
 jumpingtokernelstr	db	"Jumping to kernel.",0
