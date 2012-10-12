@@ -74,6 +74,11 @@ memmaploop:
 	call print
 	add sp, 2
 
+; disable NMI
+	in al, 0x70
+	or al, 0x80
+	out 0x70, al
+
 ; protected mode
 	cli
 	lgdt [gdt0]
@@ -86,13 +91,12 @@ memmaploop:
 align 32
 initsegments:
 
-	mov eax, 8
+	mov eax, 16
 	mov ds, eax
 	mov ss, eax
 	mov es, eax
+	mov gs, eax
 	mov fs, eax
-
-	hlt
 
 	jmp 0x8:STAGE2_PHYSADDR
 
@@ -227,7 +231,7 @@ clearloop:
 
 ; GDT data
 gdt0:
-	dw	gdtend-gdt0
+	dw	gdtend-gdt0-1
 	dd	gdt0	
 	times	2	db	0
 gdt1:						; code segment
