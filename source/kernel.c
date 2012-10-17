@@ -1,7 +1,3 @@
-typedef unsigned int size_t;
-const char* cs_kernelgreeting;
-void *memcpy(void* dest, const void *src, size_t n);
-size_t strlen(const char* str);
 
 void kernelentry()
 {
