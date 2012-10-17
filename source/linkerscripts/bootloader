@@ -1,8 +1,0 @@
-SECTIONS
-{
-	bootloader 0x7c00:
-	{
-		*(.text)
-	}
-}
-

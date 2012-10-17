@@ -1,13 +1,16 @@
 %include "types.asm"
 %define SCREEN_SEGMENT		0xb800
 %define STAGE1_PHYSADDR		0x7c00
-%define STAGE2_PHYSADDR		0x8000
+%define STAGE2_PHYSADDR		0x7e00
 %define BOOTLOADER_STACK	0x7bfe
 %define MEMMAP_PHYSADDR		0x0500
 
-section .text
+org STAGE1_PHYSADDR
 
-[bits 16]
+global _start
+_start:
+
+bits 16
 stage1:
 
 	xor ax, ax
@@ -20,21 +23,28 @@ stage1:
 
 	push loadingstr
 	call print
-	add sp, 2
+	inc sp
+	inc sp
 
 ; read 32 sectors of awesome^W stage2
-	mov ah, 1
-	mov al, 32
-	mov ch, 0
-	mov cl, 2
-	mov dh, 0
-	mov dl, 0
+	mov ax, 0x0220
+	mov cx, 2
+	xor dx, dx
 	mov bx, STAGE2_PHYSADDR
 	int 0x13
 
+	jc readerr
+
+;	push 1024
+;	push STAGE2_PHYSADDR
+;	push numberstr
+;	call print
+;	hlt
+
 	push memmapstartstr
 	call print
-	add sp, 2
+	inc sp
+	inc sp
 
 ; memory mapping
 	xor ebx, ebx
@@ -72,7 +82,8 @@ memmaploop:
 
 	push jumpingtokernelstr
 	call print
-	add sp, 2
+	inc sp
+	inc sp
 
 ; disable NMI
 	in al, 0x70
@@ -87,20 +98,19 @@ memmaploop:
 	mov cr0, eax
 	jmp 0x8:initsegments
 
-[bits 32]
-align 32
+bits 32
 initsegments:
 
-	mov eax, 16
-	mov ds, eax
-	mov ss, eax
-	mov es, eax
-	mov gs, eax
-	mov fs, eax
+	mov ax, 16
+	mov ds, ax
+	mov ss, ax
+	mov es, ax
+	mov gs, ax
+	mov fs, ax
 
 	jmp 0x8:STAGE2_PHYSADDR
 
-[bits 16]
+bits 16
 
 print:
 	pushf
@@ -229,36 +239,49 @@ clearloop:
 	popf
 	ret
 
+readerr:
+	push readerrstr
+	call print
+	hlt
+
 ; GDT data
+align 8
 gdt0:
 	dw	gdtend-gdt0-1
 	dd	gdt0	
 	times	2	db	0
 gdt1:						; code segment
 istruc GDT_entry
-	.limit_l	dw	0x0000
-	.base_lw	dw	0xFFFF
-	.base_hwl	db	0xFF
+	.limit_l	dw	0xFFFF
+	.base_lw	dw	0x0000
+	.base_hwl	db	0x00
 	.access_byte	db	10011010b
 	.flags_limit	db	11001111b
-	.base_hwh	db	0xFF
+	.base_hwh	db	0x00
 iend
 gdt2:						; data segment
 istruc GDT_entry
-	.limit_l	dw	0x0000
-	.base_lw	dw	0xFFFF
-	.base_hwl	db	0xFF
+	.limit_l	dw	0xFFFF
+	.base_lw	dw	0x0000
+	.base_hwl	db	0x00
 	.access_byte	db	10010010b
 	.flags_limit	db	11001111b
-	.base_hwh	db	0xFF
+	.base_hwh	db	0x00
 iend
 gdtend:
 
-loadingstr		db	"ABCDEF",10,0
-memmapstartstr		db	"Memory map:",10,"Base             | Length           | Type",10,0
-memmapentrystr		db	"% | % | %",10,0
-jumpingtokernelstr	db	"Jumping to kernel.",0
+loadingstr		db	"Loading",10,0
+memmapstartstr		db	"Memory map (Base/Length/Type):",10,0
+memmapentrystr		db	"% % %",10,0
+jumpingtokernelstr	db	"Jumping to kernel",0
+readerrstr		db	"Read error",0
+numberstr		db	"%",10,0
 
+zeropadding:
 times 510-($-stage1) db 0
+
+signature:
 dw 0xaa55
+
+end:
 
