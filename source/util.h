@@ -3,8 +3,9 @@
 
 #include "types.h"
 
-void kmemset(void *address, char value, size_t range);
-void kmemcpy(void *dest, const void *src, size_t n);
+void kmemset(char *address, char value, size_t range);
+void kmemcpy(char *dest, const char *src, size_t n);
+unsigned int kstrlen(const char* str);
 
 #endif
 

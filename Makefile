@@ -1,20 +1,25 @@
-LD = i386-pc-linux-gnu-ld
+LD = i686-pc-linux-gnu-ld
 CC = gcc
+CP = g++
 AS = nasm
 
 sourcedir	= source
 builddir	= build
-kernelopts	= -nostdlib -nodefaultlibs -m32 -fno-builtin
+CCopts		= -pipe
+CPopts		= -pipe
+kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m32 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -nostdinc++
 ldopts		= --nostdlib
 ldoptsbin	= --oformat binary
+
+kernelobjects	= $(sourcedir)/*.cpp $(sourcedir)/*.c
 
 all: image.bin
 
 bootloader.bin: $(sourcedir)/bootloader.asm
 	$(AS) -f bin -i $(sourcedir)/ -o $(builddir)/bootloader.bin $(sourcedir)/bootloader.asm
 	
-kernel.o: $(sourcedir)/kernel.c
-	$(CC) -O0 -c $(kernelopts) $(sourcedir)/kernel.c -o $(builddir)/kernel.o
+kernel.o: $(kernelobjects)
+	$(CP) $(CPopts) $(kernelopts) $(kernelobjects) -o $(builddir)/kernel.o
 
 kernel.bin: kernel.o
 	$(LD) $(ldoptsbin) $(ldopts) -o $(builddir)/kernel.bin -T $(sourcedir)/linkerscripts/kernel
@@ -28,3 +33,4 @@ simulate: image.bin
 
 clean:
 	rm $(builddir)/*
+

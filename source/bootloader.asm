@@ -188,22 +188,7 @@ printoctet:
 	inc di
 	jmp printnumberloop
 printdata:
-	db	'0'
-	db	'1'
-	db	'2'
-	db	'3'
-	db	'4'
-	db	'5'
-	db	'6'
-	db	'7'
-	db	'8'
-	db	'9'
-	db	'a'
-	db	'b'
-	db	'c'
-	db	'd'
-	db	'e'
-	db	'f'
+	db	'0123456789abcdef'
 printreturn:
 	mov [print_screenptr], di
 	pop es
@@ -270,12 +255,12 @@ istruc GDT_entry
 iend
 gdtend:
 
-loadingstr		db	"Loading",10,0
+loadingstr		db	"Loading...",10,0
 memmapstartstr		db	"Memory map (Base/Length/Type):",10,0
 memmapentrystr		db	"% % %",10,0
-jumpingtokernelstr	db	"Jumping to kernel",0
-readerrstr		db	"Read error",0
-numberstr		db	"%",10,0
+jumpingtokernelstr	db	"Jumping to kernel.",0
+readerrstr		db	"Read error.",0
+numberstr		db	"%",0
 
 zeropadding:
 times 510-($-stage1) db 0
