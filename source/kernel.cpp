@@ -48,6 +48,7 @@ BallyWood globalbally;
 
 void kernelentry()
 {
+/*
 	BallyBally ball1;
 	BallyWood ball2;
 
@@ -55,6 +56,8 @@ void kernelentry()
 	ball2.bounce();
 
 	static_cast<BallyBally*>(&ball2)->bounce();
+*/
+	kmemcpy((char*)(pfb), cs_kernelgreeting, kstrlen(cs_kernelgreeting));
 
 	for (;;);
 }

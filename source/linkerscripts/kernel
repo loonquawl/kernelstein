@@ -1,11 +1,22 @@
+INPUT (build/kernel.o)
+
 SECTIONS
 {
-	kernel 0x7e00:
+	.text 0x7e00:
 	{
-		build/kernel.o (kernelentry)
-		build/kernel.o *(.text)
-		build/kernel.o *(.data)
+		*(.text.kernelentry)
+		*(.text)
+		*(.ctors)
+		*(.bss)
+		*(.eh_frame)
+		*(.rodata)
+		*(.data)
 		. = . + 0x200;
 	} = 0x0
+
+	/DISCARD/ :
+	{
+		*(.comment)
+	}
 }
 
