@@ -38,4 +38,5 @@ simulate: image.bin
 
 clean:
 	rm $(builddir)/*
+	> $(builddir)/.keep
 
