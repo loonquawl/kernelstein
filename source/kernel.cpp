@@ -12,8 +12,9 @@ class BallyBally
 
 		void printstr(const char* str)
 		{
+			static int boo=2;
 			kmemcpy((char*)(pfb), str, kstrlen(str));
-			pfb+=80*2;
+			pfb+=80*boo;
 		}
 
 		static const char* cs_bounce1;

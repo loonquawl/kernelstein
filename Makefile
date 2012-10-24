@@ -7,7 +7,7 @@ sourcedir	= source
 builddir	= build
 CCopts		= -pipe
 CPopts		= -pipe
-kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m32 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -nostdinc++ -ffunction-sections
+kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m32 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi
 ldopts		= --nostdlib
 ldoptsbin	= --oformat binary
 
