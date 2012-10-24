@@ -16,8 +16,8 @@ class BallyBally
 			pfb+=80*2;
 		}
 
-//		static const char* cs_bounce1;
-//		static const char* cs_bounce2;
+		static const char* cs_bounce1;
+		static const char* cs_bounce2;
 
 	public:
 
@@ -44,11 +44,14 @@ class BallyWood : public BallyBally
 
 const char* cs_kernelgreeting="W e l c o m e   t o   K e r n e l s t e i n ! ";
 
+const char* BallyBally::cs_bounce1="b o u n c e   1 ! ";
+const char* BallyBally::cs_bounce2="b o u n c e   2 ! ";
+
 BallyWood globalbally;
 
 void kernelentry()
 {
-/*
+
 	BallyBally ball1;
 	BallyWood ball2;
 
@@ -56,8 +59,6 @@ void kernelentry()
 	ball2.bounce();
 
 	static_cast<BallyBally*>(&ball2)->bounce();
-*/
-	kmemcpy((char*)(pfb), cs_kernelgreeting, kstrlen(cs_kernelgreeting));
 
 	for (;;);
 }

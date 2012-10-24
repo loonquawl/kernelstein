@@ -2,16 +2,17 @@ INPUT (build/kernel.o)
 
 SECTIONS
 {
-	.text 0x7e00:
+	kernel 0x7e00:
 	{
 		*(.text.kernelentry)
-		*(.text)
-		*(.ctors)
-		*(.bss)
-		*(.eh_frame)
-		*(.rodata)
-		*(.data)
-		. = . + 0x200;
+		*(.text*)		
+		*(.ctors*)
+		*(.dtors*)
+		*(.eh_frame*)
+		*(.bss*)
+		*(.data*)
+		*(.rodata*)
+		*(.group*)
 	} = 0x0
 
 	/DISCARD/ :

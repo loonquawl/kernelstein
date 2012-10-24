@@ -4,7 +4,7 @@
 
 extern "C" {
 
-//	int __cxa_guard_acquire(uint32_t* guard_object);
+	int __cxa_guard_acquire(uint32_t* guard_object);
 
 };
 
