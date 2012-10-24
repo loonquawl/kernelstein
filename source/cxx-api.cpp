@@ -8,3 +8,11 @@ int __cxa_guard_acquire(uint32_t* guard_object)
 	return 0;
 }
 
+void __cxa_pure_virtual()
+{
+}
+
+void operator delete(void* address)
+{
+}
+

@@ -11,10 +11,3 @@ void kmemcpy(char *dest, const char *src, size_t n)
 	for(; n; --n) *dest++ = *src++;
 }
 
-unsigned int kstrlen(const char *str)
-{
-	const char* start=str;
-	for (; *str; ++str);
-	return str-start;
-}
-

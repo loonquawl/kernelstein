@@ -7,7 +7,7 @@ sourcedir	= source
 builddir	= build
 CCopts		= -pipe
 CPopts		= -pipe
-kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m32 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi
+kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m32 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb
 ldopts		= --nostdlib
 ldoptsbin	= --oformat binary
 
@@ -16,10 +16,10 @@ kernelobjects	= $(sourcedir)/*.cpp $(sourcedir)/*.c
 all: image.bin kernel_relocated.o
 
 bootloader.bin: $(sourcedir)/bootloader.asm
-	$(AS) -f bin -i $(sourcedir)/ -o $(builddir)/bootloader.bin $(sourcedir)/bootloader.asm
+	$(AS) -f bin -I $(sourcedir)/include/ -o $(builddir)/bootloader.bin $(sourcedir)/bootloader.asm
 	
 kernel.o: $(kernelobjects)
-	$(CP) $(CPopts) $(kernelopts) $(kernelobjects) -o $(builddir)/kernel.o 
+	$(CP) $(CPopts) $(kernelopts) $(kernelobjects) -I$(sourcedir)/include -o $(builddir)/kernel.o 
 
 kernel_relocated.o: kernel.o
 	$(LD) $(ldopts) -o $(builddir)/kernel_relocated.o -T $(sourcedir)/linkerscripts/kernel
@@ -35,6 +35,12 @@ image.bin: bootloader.bin kernel.bin
 
 simulate: image.bin
 	qemu -s -fda $(builddir)/image.bin 
+
+debug: image.bin
+	qemu -S -s -fda $(builddir)/image.bin
+
+gdb:
+	gdb -x misc/gdbstartup
 
 clean:
 	rm $(builddir)/*
