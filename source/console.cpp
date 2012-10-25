@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include "console.hpp"
+#include "string.hpp"
 #include "util.h"
-#include "string.h"
 
 EarlyKernelConsole::EarlyKernelConsole()
 : video_addr((char*)(0xb8000))
