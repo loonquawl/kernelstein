@@ -46,6 +46,22 @@
 			  insert_blinking_text(false)
 			{}
 
+			CharColor get_background_color()
+			{
+				return background_color;
+			}
+
+			CharColor get_foreground_color()
+			{
+				return foreground_color;
+			}
+
+
+			bool get_blinking()
+			{
+				return insert_blinking_text;
+			}
+
 			virtual void print(const char* str) = 0;
 			virtual void printf(const char* format, ...) = 0;
 
@@ -68,6 +84,10 @@
 
 			virtual ~Console() {}
 	};
+
+	Console& operator<<(Console& console, const char* string);
+	Console& operator<<(Console& console, int integer);
+	Console& operator<<(Console& console, Console::CharColor foreground);
 
 	class EarlyKernelConsole : public Console
 	{

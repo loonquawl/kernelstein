@@ -74,3 +74,22 @@ void EarlyKernelConsole::set_color(const CharColor& fg, const CharColor& bg, boo
 	colorbyte=(char)((int)(fg)|(int)(bg)<<4|(int)(blink)<<7);
 }
 
+
+Console& operator<<(Console& console, const char* string)
+{
+	console.print(string);
+	return console;
+}
+
+Console& operator<<(Console& console, int integer)
+{
+	console.printf("%d",integer);
+	return console;
+}
+
+Console& operator<<(Console& console, Console::CharColor foreground)
+{
+	console.set_color(foreground,console.get_background_color(),console.get_blinking());
+	return console;
+}
+
