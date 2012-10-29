@@ -2,10 +2,9 @@
 #include "console.hpp"
 #include "string.hpp"
 
-EarlyKernelConsole console;
-
 void kernelentry()
 {
+	EarlyKernelConsole console;
 	console << "Hello!\n";
 
 	for (;;);

@@ -2,6 +2,7 @@ LD = i686-unknown-elf-ld
 CC = i686-unknown-elf-gcc
 CP = g++
 AS = nasm
+EMU = qemu-system-x86_64
 
 sourcedir	= source
 builddir	= build
@@ -10,6 +11,7 @@ CPopts		= -pipe
 kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m32 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb
 ldopts		= --nostdlib
 ldoptsbin	= --oformat binary
+emuopts		= -no-kvm
 
 kernelobjects	= $(sourcedir)/*.cpp $(sourcedir)/*.c
 
@@ -34,10 +36,10 @@ image.bin: bootloader.bin kernel.bin
 	dd if=/dev/zero bs=512 count=1 >> $(builddir)/image.bin
 
 simulate: image.bin
-	qemu -s -fda $(builddir)/image.bin 
+	$(EMU) $(emuopts) -s -fda $(builddir)/image.bin 
 
 debug: image.bin
-	qemu -S -s -fda $(builddir)/image.bin
+	$(EMU) $(emuopts) -S -s -fda $(builddir)/image.bin
 
 gdb:
 	gdb -x misc/gdbstartup
