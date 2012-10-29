@@ -81,15 +81,45 @@ Console& operator<<(Console& console, const char* string)
 	return console;
 }
 
+Console& operator<<(Console& console, void* ptr)
+{
+	return operator<<(console,(unsigned long)(ptr));
+}
+
 Console& operator<<(Console& console, int integer)
 {
-	console.printf("%d",integer);
+	const char* fmt;
+	switch (console.get_numerical_output_mode())
+	{
+		case Console::BIN:
+			fmt="";
+			break;
+		case Console::OCT:
+			fmt="%o";
+			break;
+		case Console::HEX:
+			fmt="%h";
+			break;
+		case Console::DEC:
+			fmt="%d";
+			break;
+		default:
+			fmt="";
+			break;
+	}
+	console.printf(fmt,integer);
 	return console;
 }
 
 Console& operator<<(Console& console, Console::CharColor foreground)
 {
 	console.set_color(foreground,console.get_background_color(),console.get_blinking());
+	return console;
+}
+
+Console& operator<<(Console& console, Console::NumericalOutput mode)
+{
+	console.set_numerical_output_mode(mode);
 	return console;
 }
 

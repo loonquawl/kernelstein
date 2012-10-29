@@ -1,5 +1,5 @@
-LD = i686-unknown-elf-ld
-CC = i686-unknown-elf-gcc
+LD = ld
+CC = gcc
 CP = g++
 AS = nasm
 EMU = qemu-system-x86_64
@@ -8,10 +8,10 @@ sourcedir	= source
 builddir	= build
 CCopts		= -pipe
 CPopts		= -pipe
-kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m32 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb
+kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m64 -ffreestanding -O0 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb
 ldopts		= --nostdlib
 ldoptsbin	= --oformat binary
-emuopts		= -no-kvm
+#emuopts		= -no-kvm
 
 kernelobjects	= $(sourcedir)/*.cpp $(sourcedir)/*.c
 

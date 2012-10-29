@@ -26,6 +26,14 @@
 				WHITE
 			};
 
+			enum NumericalOutput
+			{
+				BIN,
+				OCT,
+				DEC,
+				HEX
+			};
+
 		protected:
 
 			unsigned int	cursor_x;
@@ -38,12 +46,15 @@
 			CharColor	background_color;
 			bool		insert_blinking_text;
 
+			NumericalOutput numerical_output_mode;
+
 		public:
 
 			Console()
 			: cursor_x(0), cursor_y(0), width(80), height(25),
 			  foreground_color(WHITE), background_color(BLACK),
-			  insert_blinking_text(false)
+			  insert_blinking_text(false),
+			  numerical_output_mode(DEC)
 			{}
 
 			CharColor get_background_color()
@@ -56,10 +67,19 @@
 				return foreground_color;
 			}
 
-
 			bool get_blinking()
 			{
 				return insert_blinking_text;
+			}
+
+			NumericalOutput get_numerical_output_mode()
+			{
+				return numerical_output_mode;			
+			}
+
+			void set_numerical_output_mode(NumericalOutput mode)
+			{
+				numerical_output_mode=mode;
 			}
 
 			virtual void print(const char* str) = 0;
@@ -87,7 +107,9 @@
 
 	Console& operator<<(Console& console, const char* string);
 	Console& operator<<(Console& console, int integer);
+	Console& operator<<(Console& console, void* ptr);
 	Console& operator<<(Console& console, Console::CharColor foreground);
+	Console& operator<<(Console& console, Console::NumericalOutput mode);
 
 	class EarlyKernelConsole : public Console
 	{

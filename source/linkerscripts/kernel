@@ -2,17 +2,22 @@ INPUT (build/kernel.o)
 
 SECTIONS
 {
-	kernel 0x7e00:
+	kernel 0x8000:
 	{
 		*(.text.kernelentry)
-		*(.text*)		
+		*(.text*)	
+		start_ctors = .;
 		*(.ctors*)
+		end_ctors = .;
+		start_dtors = .;
 		*(.dtors*)
+		end_dtors = .;
 		*(.eh_frame*)
 		*(.bss*)
 		*(.data*)
 		*(.rodata*)
 		*(.group*)
+		*(.gnu.linkonce*)
 	} = 0x0
 
 	/DISCARD/ :

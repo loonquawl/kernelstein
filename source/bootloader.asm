@@ -2,7 +2,7 @@
 %define SCREEN_SEGMENT		0xb800
 %define STAGE1_PHYSADDR		0x7c00
 %define STAGE2_PHYSADDR		0x8000
-%define STAGE2_VIRTADDR		0xb0bc47c0de
+%define STAGE2_VIRTADDR		0xb0bc47c0de0000
 %define BOOTLOADER_STACK	0x7bfe
 %define MEMMAP_PHYSADDR		0x0500
 
@@ -28,21 +28,31 @@ stage1:
 	inc sp
 
 	; load rest of 1024b bootloader
-	mov ax, 2
-	mov bx, STAGE1_PHYSADDR+512
+	push 512
+	push STAGE1_PHYSADDR/16
+	push 2
 	call readsector
-	inc sp
-	inc sp
+	add sp, 6
 	
 	; load the kernel
 	mov ax, 3
-	mov bx, STAGE2_PHYSADDR
-	mov cx, 512 ; 256kb
+	mov bx, (STAGE1_PHYSADDR+1024)/16
+	mov cx, 512				; 256kb
 load_kern:
+	push 0					; offset
+	push bx					; segment
+	push ax					; sector number
 	call readsector
-	inc sp
-	inc sp
+	add sp, 6
+
 	inc ax
+	add bx, 512/16
+
+	push dotstr
+	call print
+	inc sp
+	inc sp
+
 	loop load_kern
 
 	push memmapstartstr
@@ -50,7 +60,7 @@ load_kern:
 	inc sp
 	inc sp
 
-	; memory mapping
+memmap:
 	xor ebx, ebx
 	mov di, MEMMAP_PHYSADDR
 memmaploop:
@@ -79,18 +89,25 @@ memmaploop:
 	test ebx, ebx
 	jnz memmaploop
 
-	push jumpingtokernelstr
-	call print
-	inc sp
-	inc sp
+	jmp protmode
 
-; ax - sector number, es:bx - output
+; word [esp+18] - bx \
+; word [esp+16] - es  -	output es:bx
+; word [esp+14] - sector number
 readsector:
+	pushf
 	push ax
+	push bx
 	push cx
 	push dx
+	push es
 
-	mov ax, [sp+8]
+	mov ax, [ss:esp+16]
+	mov es, ax
+
+	mov bx, [ss:esp+18]
+
+	mov ax, [ss:esp+14]
 	dec ax
 	mov cl, 36
 	xor dx, dx
@@ -105,15 +122,17 @@ secnum_ok:
 	mov ax, 0x0201
 	inc cl
 
-	push dx
 	stc
 	int 0x13
 	jc readerr
-	pop dx
 
-	pop dc
+	pop es
+	pop dx
 	pop cx
+	pop bx
 	pop ax
+	popf
+	ret
 
 print:
 	pushf
@@ -231,12 +250,14 @@ readerr:
 	call print
 	hlt
 
-loadingstr		db	"Loading...",10,0
-memmapstartstr		db	"Memory map (Base/Length/Type):",10,0
+loadingstr		db	"Loading",0
+memmapstartstr		db	10,"Memory map (Base/Length/Type):",10,0
 memmapentrystr		db	"% % %",10,0
-jumpingtokernelstr	db	"Jumping to kernel.",0
-readerrstr		db	"Read error.",0
+readerrstr		db	"Read error",0
+leaverealstr		db	"Jumping to kernel"
+newlinestr		db	10,0
 numberstr		db	"%",0
+dotstr			db	".",0
 
 zeropadding:
 times 510-($-stage1) db 0
@@ -290,6 +311,39 @@ istruc GDT_entry
 	.base_hwh	db	0
 gdt_end:
 
+nolongmodestr	db	"Long mode not available.    ",0
+
+bits 32
+paintitred32:
+	push edi
+	mov edi, 0xb8001
+	mov al, 14+64
+paintitred32_loop:
+	stosb
+	inc edi
+	cmp edi, 0xb8001+80*25*2
+	jne paintitred32_loop
+	pop edi
+	ret
+
+print32:
+	push esi
+	push edi
+	mov esi, [esp+12]
+	mov edi, 0xb8000
+print32loop:
+	lodsb
+	test al, al
+	jz print32end
+	stosb
+	inc edi
+	jmp print32loop
+print32end:
+	pop edi
+	pop esi
+	ret
+
+bits 16
 protmode:
 	; A20
 	in al, 0x92
@@ -301,6 +355,11 @@ protmode:
 	or al, 0x80
 	out 0x70, al
 
+	push leaverealstr
+	call print
+	inc sp
+	inc sp
+
 	; load GDT	
 	cli
 	lgdt [gdt]
@@ -311,13 +370,24 @@ protmode:
 
 bits 32
 initsegments:
-
-	mov ax, 16
+	mov ax, Data32
 	mov ds, ax
 	mov ss, ax
 	mov es, ax
 	mov gs, ax
 	mov fs, ax
+
+check64bit:
+	mov eax, 0x80000001
+	cpuid
+	and edx, 1 << 29
+	jnz setuppaging
+
+	call paintitred32
+
+	push nolongmodestr
+	call print32
+	hlt
 
 setuppaging:
 	; clear tables
@@ -358,12 +428,30 @@ setentry:
 	mov cr0, eax
 
 ;	lgdt [gdt]
-	jmp Code64:Realm64
+	jmp Code64:initsegments64
 
 bits 64
-Realm64:
-	mov rax, 0xdeadbeefc0debabe
-	mov [0xb8000], rax
+initsegments64:
+	mov ax, Data64
+	mov ds, ax
+	mov ss, ax
+	mov es, ax
+	mov gs, ax
+	mov fs, ax
+
+; later...
+;setupkernelpages:
+	; calculate PML4E address
+;	mov rbx, cr3
+;	mov rax, STAGE2_VIRTADDR
+;	shr rax, 39
+;	shl rax, 3
+;	add rax, rbx
+;	mov [rax], 0xb
+
+
+jumptokernel:
+	jmp 0x8000
 	hlt
 
 zeropadding2:
