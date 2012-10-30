@@ -11,14 +11,20 @@ EarlyKernelConsole::EarlyKernelConsole()
 	clear();
 }
 
+char* EarlyKernelConsole::get_cursor_address()
+{
+	return video_addr+cursor_y*width*2+cursor_x*2;
+}
+
 void EarlyKernelConsole::print(const char* str)
 {
-	char* console=video_addr+cursor_y*width*2+cursor_x*2;
+	char* console=get_cursor_address();
 	while (*str)
 	{
 		if (*str=='\n')
 		{
 			nextline();
+			console=get_cursor_address();
 			++str;
 		}
 		else
@@ -86,13 +92,13 @@ Console& operator<<(Console& console, void* ptr)
 	return operator<<(console,(unsigned long)(ptr));
 }
 
-Console& operator<<(Console& console, int integer)
+Console& operator<<(Console& console, long integer)
 {
 	const char* fmt;
 	switch (console.get_numerical_output_mode())
 	{
 		case Console::BIN:
-			fmt="";
+			fmt="%b";
 			break;
 		case Console::OCT:
 			fmt="%o";

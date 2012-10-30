@@ -12,7 +12,14 @@ void __cxa_pure_virtual()
 {
 }
 
+int __cxa_atexit(void (*destructor)(void*), void* arg, void* dso)
+{
+	return 0;
+}
+
 void operator delete(void* address)
 {
 }
+
+void* __dso_handle=0;
 

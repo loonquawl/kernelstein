@@ -2,6 +2,8 @@ INPUT (build/kernel.o)
 
 SECTIONS
 {
+	. = 0x8000;
+
 	kernel 0x8000:
 	{
 		*(.text.kernelentry)

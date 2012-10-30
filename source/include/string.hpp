@@ -7,7 +7,7 @@
 	char*	kstrcpy(char* dest, const char* src);
 	int	ksprintf(char* str, const char* fmt, ...);
 	int	kvsprintf(char* str, const char* fmt, va_list v);
-	int	kitoa(int value, char* dest, int base);
+	int	kitoa(long value, char* dest, long base);
 
 #endif
 

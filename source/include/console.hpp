@@ -106,7 +106,7 @@
 	};
 
 	Console& operator<<(Console& console, const char* string);
-	Console& operator<<(Console& console, int integer);
+	Console& operator<<(Console& console, long integer);
 	Console& operator<<(Console& console, void* ptr);
 	Console& operator<<(Console& console, Console::CharColor foreground);
 	Console& operator<<(Console& console, Console::NumericalOutput mode);
@@ -118,6 +118,8 @@
 			char*	const	video_addr;
 			char		colorbyte;
 
+			char*		get_cursor_address();
+
 		public:
 
 			EarlyKernelConsole();
@@ -126,7 +128,7 @@
 			virtual void printf(const char* format, ...);
 			virtual void clear();
 			virtual void set_color(const CharColor& fg, const CharColor& bg=BLACK, bool blink=false);
-			virtual void nextline();
+			virtual void nextline();			
 	};
 
 #endif
