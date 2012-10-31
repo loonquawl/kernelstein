@@ -4,23 +4,22 @@
 #include "cxx-api.h"
 #include "globals.hpp"
 #include "panic.hpp"
+#include "pageallocator.hpp"
 
 void kernelentry()
 {
+//	kclihlt();
 	kconstruct_globals();
 
-	g_console << "Awyeah!" << "\n";
+	g_console << "Memory map:" << "\n";
 
-
-/*
-	char ps2commport=0x64;
-	char ps2dataport=0x60;
-	char outbyte=0xd0; // test controller
-	char inbyte=0; // should be PS2 controller output port
-
-	koutb(ps2commport,outbyte);
-	inbyte=kinb(ps2dataport+1);
-*/
-	for (;;);
+	g_console << Console::HEX;
+	for (PageAllocator::MemoryMapEntry* eptr=PageAllocator::memmap_addr;
+		eptr->type; ++eptr)
+	{
+		g_console	<< eptr->base_addr	<< "\t"
+				<< eptr->length		<< "\t"
+				<< eptr->type		<< "\n";
+	}
 }
 

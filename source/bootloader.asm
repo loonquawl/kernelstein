@@ -73,7 +73,7 @@ memmaploop:
 	; stop for a while and print the entry
 	add di, 16
 
-	push 4		; dword
+	push 8		; qword
 	push di		; region type
 	push 8		; qword
 	sub di, 8
@@ -90,9 +90,11 @@ memmaploop:
 	jnz memmaploop
 
 	; set last entry to all zeroes
-	xor ax, ax
+	xor eax, eax
+	mov ecx, 6
+zerolastentry:
 	stosd
-	stosd
+	loop zerolastentry
 
 	jmp protmode
 
@@ -457,7 +459,7 @@ initsegments64:
 
 
 jumptokernel:
-	jmp 0x8000
+	call 0x8000
 	hlt
 
 zeropadding2:

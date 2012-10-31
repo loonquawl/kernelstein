@@ -9,26 +9,37 @@
 			// int15h, ax=0xe820
 			struct MemoryMapEntry
 			{
-				uint32_t base_address;
-				uint32_t reserved;
-				uint16_t type;
-				uint16_t extended_attr;
+				uint64_t base_addr;
+				uint64_t length;
+				uint8_t	 type;
+				uint8_t  reservedb1;
+				uint8_t  reservedb2;
+				uint8_t  reservedb3;
+				uint8_t  reservedb4;
+				uint8_t  reservedb5;
+				uint8_t  reservedb6;
+				uint8_t  reservedb7;
+			} __attribute__((packed));
+
+			enum MemoryType
+			{
+				USABLE = 1,
+				RESERVED
 			};
 
-		private:
-
-			PageAllocator() {}
-	
-			static const MemoryMapEntry* memmap_addr;
-
-		public:
-	
 			enum PageSize
 			{
 				P4K,
 				P1M
 			};
 
+		private:
+
+			PageAllocator() {}
+	
+		public:
+	
+			static MemoryMapEntry* const memmap_addr;
 
 			static void* get_page();
 	};
