@@ -5,6 +5,7 @@
 
 extern void* start_ctors;
 extern void* end_ctors;
+extern void* entry;
 
 class Test
 {
@@ -22,17 +23,15 @@ void kernelentry()
 {
 	EarlyKernelConsole console;
 
-	PRINTVAR(console,(long)0xdeadbeef);
-	PRINTVAR(console,start_ctors);
-	PRINTVAR(console,end_ctors);
-	console << 0xdeadbeef << "\n";
-	console.printf("%d\n",0xdeadbeef);
-	console << 0x8000 << "\n";
+	char ps2commport=0x64;
+	char ps2dataport=0x60;
+	char outbyte=0xd0; // test controller
+	char inbyte=0; // should be PS2 controller output port
 
-	for (long i=0;;++i)
-	{
-		console << Console::HEX << i << Console::CharColor(i%10) << " ";
-	}
+	koutb(ps2commport,outbyte);
+	inbyte=kinb(ps2dataport+1);
+
+	console << Console::HEX << inbyte << "\n";
 
 	for (;;);
 }

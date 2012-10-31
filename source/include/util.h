@@ -6,6 +6,8 @@
 
 void kmemset(char *address, char value, size_t range);
 void kmemcpy(char *dest, const char *src, size_t n);
+void koutb(char port, char value);
+char kinb(char port);
 
 #endif
 

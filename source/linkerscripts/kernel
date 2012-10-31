@@ -6,6 +6,7 @@ SECTIONS
 
 	kernel 0x8000:
 	{
+		entry = .;
 		*(.text.kernelentry)
 		*(.text*)	
 		start_ctors = .;
