@@ -10,9 +10,13 @@ extern "C" {
 
 };
 
+void* operator new(size_t size);
+void* operator new(size_t size, void* placement_new);
 void operator delete(void* address);
 
 extern void* __dso_handle;
+
+void kconstruct_globals();
 
 #endif
 

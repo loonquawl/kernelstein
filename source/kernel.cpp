@@ -1,28 +1,18 @@
 #include "kernel.hpp"
-#include "console.hpp"
 #include "string.hpp"
 #include "util.h"
-
-extern void* start_ctors;
-extern void* end_ctors;
-extern void* entry;
-
-class Test
-{
-	int abc;
-	public:
-		Test()
-		{
-			abc=abc*2;
-		}
-};
-
-Test blah;
+#include "cxx-api.h"
+#include "globals.hpp"
+#include "panic.hpp"
 
 void kernelentry()
 {
-	EarlyKernelConsole console;
+	kconstruct_globals();
 
+	g_console << "Awyeah!" << "\n";
+
+
+/*
 	char ps2commport=0x64;
 	char ps2dataport=0x60;
 	char outbyte=0xd0; // test controller
@@ -30,9 +20,7 @@ void kernelentry()
 
 	koutb(ps2commport,outbyte);
 	inbyte=kinb(ps2dataport+1);
-
-	console << Console::HEX << inbyte << "\n";
-
+*/
 	for (;;);
 }
 

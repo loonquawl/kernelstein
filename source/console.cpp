@@ -3,6 +3,8 @@
 #include "string.hpp"
 #include "util.h"
 
+uint8_t Console::tabsize = 5;
+
 EarlyKernelConsole::EarlyKernelConsole()
 : video_addr((char*)(0xb8000))
 {
@@ -25,15 +27,25 @@ void EarlyKernelConsole::print(const char* str)
 		{
 			nextline();
 			console=get_cursor_address();
-			++str;
+		}
+		else if (*str=='\t')
+		{
+			uint8_t i=cursor_x%tabsize;
+			for (; i<tabsize; ++i)
+			{				
+				*console++=' ';
+				*console++=colorbyte;
+				advance_cursor();
+				console=get_cursor_address();
+			}
 		}
 		else
 		{
-			*console++=*str++;
+			*console++=*str;
 			*console++=colorbyte;
-			if (++cursor_x>=width)
-				nextline();
+			advance_cursor();
 		}
+		++str;
 	}
 }
 

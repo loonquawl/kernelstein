@@ -13,7 +13,7 @@ void kmemcpy(char *dest, const char *src, size_t n)
 
 void koutb(char port, char value)
 {
-	asm volatile ("out %%al, %%dx"::"a" (value), "d" (port));
+	asm volatile ("outb %%al, %%dx"::"a" (value), "d" (port));
 }
 
 char kinb(char port)
@@ -21,5 +21,10 @@ char kinb(char port)
 	char ret=0;
 	asm volatile ("inb %%dx, %%al":"=a" (ret):"d" (port));
 	return ret;
+}
+
+void kclihlt()
+{
+	asm volatile ("cli; hlt;");
 }
 

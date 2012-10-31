@@ -1,5 +1,6 @@
 #ifndef KERN_CONSOLE
 #define KERN_CONSOLE
+#include "types.h"
 
 	class Console
 	{
@@ -35,6 +36,8 @@
 			};
 
 		protected:
+
+			static uint8_t	tabsize;
 
 			unsigned int	cursor_x;
 			unsigned int	cursor_y;
@@ -100,6 +103,12 @@
 			{
 				++cursor_y; // implement moving lines up the screen
 				cursor_x=0;
+			}
+
+			virtual void advance_cursor()
+			{
+				if (++cursor_x>=width)
+					nextline();
 			}
 
 			virtual ~Console() {}

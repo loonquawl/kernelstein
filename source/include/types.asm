@@ -15,10 +15,3 @@ struc GDT_entry
 	.base_hwh:		resb	1	; MSByte of MSWord of the base
 endstruc
 
-struc BIOS_memorymap
-	.base_address		resq	1
-	.reserved1		resq	1
-	.type			resd	1
-	.extended_attr		resd	1
-endstruc
-

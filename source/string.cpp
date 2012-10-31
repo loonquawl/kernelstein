@@ -37,8 +37,12 @@ int kvsprintf(char* str, const char* fmt, va_list v)
 		}
 		else if (*fmt=='%')
 		{
-			long d;
-			char c, *s;
+			union
+			{
+				long d;
+				unsigned long u;
+				char c, *s;
+			};
 
 			switch (*(fmt+1))
 			{

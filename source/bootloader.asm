@@ -37,7 +37,7 @@ stage1:
 	; load the kernel
 	mov ax, 3
 	mov bx, (STAGE1_PHYSADDR+1024)/16
-	mov cx, 512				; 256kb
+	mov cx, 1024				; 512kb
 load_kern:
 	push 0					; offset
 	push bx					; segment
@@ -88,6 +88,11 @@ memmaploop:
 	add di, 24
 	test ebx, ebx
 	jnz memmaploop
+
+	; set last entry to all zeroes
+	xor ax, ax
+	stosd
+	stosd
 
 	jmp protmode
 
@@ -252,11 +257,10 @@ readerr:
 
 loadingstr		db	"Loading",0
 memmapstartstr		db	10,"Memory map (Base/Length/Type):",10,0
-memmapentrystr		db	"% % %",10,0
-readerrstr		db	"Read error",0
-leaverealstr		db	"Jumping to kernel"
+memmapentrystr		db	"% % %"
 newlinestr		db	10,0
-numberstr		db	"%",0
+readerrstr		db	"Read error",0
+;numberstr		db	"%",0
 dotstr			db	".",0
 
 zeropadding:
@@ -264,6 +268,8 @@ times 510-($-stage1) db 0
 
 signature:
 dw 0xaa55
+
+leaverealstr		db	"Jumping to kernel",0
 
 gdt:
 gdt0:

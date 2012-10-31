@@ -1,31 +1,34 @@
-INPUT (build/kernel.o)
-
 SECTIONS
 {
-	. = 0x8000;
-
 	kernel 0x8000:
 	{
 		entry = .;
 		*(.text.kernelentry)
-		*(.text*)	
-		start_ctors = .;
-		*(.ctors*)
-		end_ctors = .;
-		start_dtors = .;
-		*(.dtors*)
-		end_dtors = .;
+		*(.text*)
 		*(.eh_frame*)
-		*(.bss*)
+		*(.gnu.linkonce*)
 		*(.data*)
 		*(.rodata*)
-		*(.group*)
-		*(.gnu.linkonce*)
+		*(.bss*)
 	} = 0x0
+
+	ctable ALIGN(8) : 
+	{
+		constructor_table = .;
+		*(.ctors*)
+		constructor_table_end = .;
+	}
+
+	dtable ALIGN(8) :
+	{
+		destructor_table = .;
+		*(.dtors)
+		destructor_table_end = .;
+	}
 
 	/DISCARD/ :
 	{
-		*(.comment)
+		*(.comment*)
 	}
 }
 

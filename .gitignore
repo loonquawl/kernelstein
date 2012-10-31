@@ -1,5 +1,4 @@
-build/*.o
-build/*.bin
+build/*
 *.swp
 Makefile
 
