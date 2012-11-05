@@ -2,5 +2,4 @@ build/*.o
 build/*.bin
 build/*.map
 *.swp
-Makefile
 
