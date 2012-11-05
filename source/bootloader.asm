@@ -5,6 +5,7 @@
 %define STAGE2_VIRTADDR		0xb0bc47c0de0000
 %define BOOTLOADER_STACK	0x7bfe
 %define MEMMAP_PHYSADDR		0x0500
+%define PML4T_PHYSADDR		0x1000
 
 org STAGE1_PHYSADDR
 
@@ -399,19 +400,20 @@ check64bit:
 
 setuppaging:
 	; clear tables
-	mov edi, 0x1000
+	mov edi, PML4T_PHYSADDR
 	mov cr3, edi
 	xor eax, eax
 	mov ecx, 4096
 	rep stosd
 	mov edi, cr3
 	; init tables
-	mov dword [edi], 0x2003
+	mov dword [edi], PML4T_PHYSADDR+0x2003
 	add edi, 0x1000
-	mov dword [edi], 0x3003
+	mov dword [edi], PML4T_PHYSADDR+0x3003
 	add edi, 0x1000
-	mov dword [edi], 0x4003
+	mov dword [edi], PML4T_PHYSADDR+0x4003
 	add edi, 0x1000
+
 	; identity map first MB
 	mov ebx, 3
 	mov ecx, 512
