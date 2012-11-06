@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include "console.hpp"
 #include "string.hpp"
-#include "util.h"
+#include "util.hpp"
 
 uint8_t Console::tabsize = 5;
 
@@ -93,21 +93,21 @@ void EarlyKernelConsole::set_color(const CharColor& fg, const CharColor& bg, boo
 }
 
 
-Console& operator<<(Console& console, const char* string)
+Console& Console::operator<<(const char* string)
 {
-	console.print(string);
-	return console;
+	print(string);
+	return *this;
 }
 
-Console& operator<<(Console& console, void* ptr)
+Console& Console::operator<<(void* ptr)
 {
-	return operator<<(console,(unsigned long)(ptr));
+	return Console::operator<<((unsigned long)(ptr));
 }
 
-Console& operator<<(Console& console, long integer)
+Console& Console::operator<<(long integer)
 {
 	const char* fmt;
-	switch (console.get_numerical_output_mode())
+	switch (get_numerical_output_mode())
 	{
 		case Console::BIN:
 			fmt="%b";
@@ -125,19 +125,25 @@ Console& operator<<(Console& console, long integer)
 			fmt="";
 			break;
 	}
-	console.printf(fmt,integer);
-	return console;
+	printf(fmt,integer);
+	return *this;
 }
 
-Console& operator<<(Console& console, Console::CharColor foreground)
+Console& Console::operator<<(Console::CharColor foreground)
 {
-	console.set_color(foreground,console.get_background_color(),console.get_blinking());
-	return console;
+	set_color(foreground,get_background_color(),get_blinking());
+	return *this;
 }
 
-Console& operator<<(Console& console, Console::NumericalOutput mode)
+Console& Console::operator<<(Console::NumericalOutput mode)
 {
-	console.set_numerical_output_mode(mode);
-	return console;
+	set_numerical_output_mode(mode);
+	return *this;
+}
+
+Console& Console::operator<<(Console::Indent indent)
+{
+	set_indent(indent);	
+	return *this;
 }
 

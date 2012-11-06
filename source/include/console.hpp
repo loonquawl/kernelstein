@@ -1,8 +1,9 @@
 #ifndef KERN_CONSOLE
 #define KERN_CONSOLE
+#include "stream.hpp"
 #include "types.h"
 
-	class Console
+	class Console : public OStream
 	{
 		public:
 
@@ -35,6 +36,22 @@
 				HEX
 			};
 
+			class Indent
+			{
+				unsigned int padding;
+
+				public:
+
+					Indent(unsigned int padding)
+					: padding(padding)
+					{}
+
+					operator unsigned int()
+					{
+						return padding;
+					}
+			};
+
 		protected:
 
 			static uint8_t	tabsize;
@@ -51,12 +68,14 @@
 
 			NumericalOutput numerical_output_mode;
 
+			unsigned int	indent;
+
 		public:
 
 			Console()
 			: cursor_x(0), cursor_y(0), width(80), height(25),
 			  foreground_color(WHITE), background_color(BLACK),
-			  insert_blinking_text(false),
+			  insert_blinking_text(false), indent(0),
 			  numerical_output_mode(DEC)
 			{}
 
@@ -85,6 +104,17 @@
 				numerical_output_mode=mode;
 			}
 
+			unsigned int get_indent()
+			{
+				return indent;
+			}
+
+			void set_indent(unsigned int nIndent)
+			{
+				if (nIndent<width)
+					indent=nIndent;
+			}
+
 			virtual void print(const char* str) = 0;
 			virtual void printf(const char* format, ...) = 0;
 
@@ -103,6 +133,8 @@
 			{
 				++cursor_y; // implement moving lines up the screen
 				cursor_x=0;
+				for (int i=0; i<indent; ++i)
+					print(" ");
 			}
 
 			virtual void advance_cursor()
@@ -112,13 +144,14 @@
 			}
 
 			virtual ~Console() {}
-	};
 
-	Console& operator<<(Console& console, const char* string);
-	Console& operator<<(Console& console, long integer);
-	Console& operator<<(Console& console, void* ptr);
-	Console& operator<<(Console& console, Console::CharColor foreground);
-	Console& operator<<(Console& console, Console::NumericalOutput mode);
+			virtual Console& operator<<(const char* string);
+			virtual Console& operator<<(long integer);
+			virtual Console& operator<<(void* ptr);
+			virtual Console& operator<<(CharColor foreground);
+			virtual Console& operator<<(NumericalOutput mode);
+			virtual Console& operator<<(Indent indent);
+	};
 
 	class EarlyKernelConsole : public Console
 	{

@@ -1,4 +1,4 @@
-#include "util.h"
+#include "util.hpp"
 
 void kmemset(char *address, char value, size_t range)
 {
@@ -26,5 +26,14 @@ char kinb(char port)
 void kclihlt()
 {
 	asm volatile ("cli; hlt;");
+}
+
+void khexout(const char* data, size_t length, Console& output)
+{
+	const char* edata=data+length;
+	output << Console::HEX;
+	for (; data!=edata; ++data)
+		output << *data << "\t";
+	output << "\n";
 }
 

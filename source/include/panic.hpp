@@ -16,7 +16,7 @@
 				 movq	%%rsi,48+0x7c00;			\
 				 movq	%%rdi,56+0x7c00;			\
 				 movw	%%cs,72+0x7c00;				\
-				 movw	%%ds,74+0x7c00;				\		
+				 movw	%%ds,74+0x7c00;				\
 				 movq	%%rsp,%%rax;				\
 				 movq	$0x7c00+76,%%rsp;			\
 				 pushfq;					\

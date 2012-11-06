@@ -407,11 +407,16 @@ setuppaging:
 	rep stosd
 	mov edi, cr3
 	; init tables
+	; PML4T
+	mov dword [edi], PML4T_PHYSADDR+0x1003
+	; PDPT
+	add edi, 0x1000
 	mov dword [edi], PML4T_PHYSADDR+0x2003
-	add edi, 0x1000
+	; PDE
+	add edi, 0x1000	
 	mov dword [edi], PML4T_PHYSADDR+0x3003
-	add edi, 0x1000
-	mov dword [edi], PML4T_PHYSADDR+0x4003
+
+	; PT
 	add edi, 0x1000
 
 	; identity map first MB
