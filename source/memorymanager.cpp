@@ -30,41 +30,40 @@ void MemoryManager::print_pagetree(Console& output)
 			output << Console::Indent(prev_indent+12);
 			for (uint16_t pdpti=0; pdpti<512; ++pdpti)
 			{
-				uPDPTE* pdpt_entry=(uPDPTE*)(pml4_entry->physaddr)+pdpti;
+				uPDPTE* pdpt_entry=(uPDPTE*)(pml4_entry->physaddr*0x1000)+pdpti;
 
 				// Every PML4E physaddr references a Page-Directory-Pointer-Table
 				// or 1G Page
 				if (pdpt_entry->page.is_PDPTE1G && pdpt_entry->page.present)
 				{
-					output << " -> PDPTE #" << pdpti << " -> 1G page\n";
+					output << " -> PML4#" << pml4i << " PDPTE#" << pdpti << " -> 1G page\n";
 					print_PDPTE1G(&pdpt_entry->page,output);
 				}
 				else if (pdpt_entry->pointer_table.present)
 				{
-					output << " -> PDPTE #" << pdpti << " -> table\n";
+					output << " -> PML4#" << pml4i << " PDPTE#" << pdpti << " -> table\n";
 					print_PDPTE(&pdpt_entry->pointer_table,output);
 					output << Console::Indent(prev_indent+16);
 					for (uint16_t pdei=0; pdei<512; ++pdei)
 					{
-						uPDE* pd_entry=(uPDE*)(pdpt_entry->pointer_table.physaddr)+pdei;
+						uPDE* pd_entry=(uPDE*)(pdpt_entry->pointer_table.physaddr*0x1000)+pdei;
 
 						if (pd_entry->page.is_PDE2M && pd_entry->page.present)
 						{
-							output << " -> PDE #" << pdei << " -> 2M page\n";
 							print_PDE2M(&pd_entry->page,output);
 						}
 						else if (pd_entry->page_table.present)
 						{
-							output << " -> PDE #" << pdei << " -> table\n";
+							output << " -> PML4#" << pml4i << " PDPTE#" << pdpti << " PDE#" << pdei << " -> table\n";
 							print_PDE(&pd_entry->page_table,output);
 							output << Console::Indent(prev_indent+20);
 							for (uint16_t ptei=0; ptei<512; ++ptei)
 							{
 								PTE* page_table_4K=
-									(PTE*)(pd_entry->page_table.physaddr)+ptei;
+									(PTE*)(pd_entry->page_table.physaddr*0x1000)+ptei;
 								if (page_table_4K->present)
 								{	
-									output << " -> PTE #" << ptei << " -> 4K page\n";
+									output << " -> PML4#" << pml4i << " PDPTE#" << pdpti << " PDE#" << pdei << " PTE#" << ptei << " -> 4K page\n";
 									print_PTE(page_table_4K,output);
 								}
 							}
