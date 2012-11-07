@@ -2,7 +2,7 @@
 %define SCREEN_SEGMENT		0xb800
 %define STAGE1_PHYSADDR		0x7c00
 %define STAGE2_PHYSADDR		0x8000
-%define STAGE2_VIRTADDR		0xb0bc47c0de
+%define STAGE2_VIRTADDR		0xb0bc47c0de00
 %define BOOTLOADER_STACK	0x7bfe
 %define MEMMAP_PHYSADDR		0x0500
 %define PML4T_PHYSADDR		0x1000
@@ -399,34 +399,39 @@ check64bit:
 	hlt
 
 setuppaging:
+	; Refer to Intel manual, vol 3A, section 4.5.
 	; clear tables
 	mov edi, PML4T_PHYSADDR
 	mov cr3, edi
 	xor eax, eax
-	mov ecx, 4096
-	rep stosd
-	mov edi, cr3
+	mov ecx, 0x3000
+	rep stosw	; clear 24kb
+
 	; init tables
+	; first 2M
 	; PML4T
-	mov dword [edi], PML4T_PHYSADDR+0x1003
+	mov edi, cr3
+	mov dword [edi], PML4T_PHYSADDR+0x1003 ; map one PDPT to PML4+4kb
+	add edi, 0x1000 ; 512 8-byte entries
 	; PDPT
-	add edi, 0x1000
-	mov dword [edi], PML4T_PHYSADDR+0x2003
-	; PDE
-	add edi, 0x1000	
+	mov dword [edi], PML4T_PHYSADDR+0x2003 ; map one PDE2M to PML4+8kb
+	add edi, 0x1000	; PML4+8kb
+	; PDE2M
+	mov dword [edi], 1+2+128
+
+	; kernel
+	; insert another PML4E @ PML4T
+	mov edi, PML4T_PHYSADDR + ((STAGE2_VIRTADDR>>39)&0x01FF)*8
+	; ...which maps to PDPT @ PML4T+12kb
 	mov dword [edi], PML4T_PHYSADDR+0x3003
-
-	; PT
-	add edi, 0x1000
-
-	; identity map first MB
-	mov ebx, 3
-	mov ecx, 512
-setentry:
-	mov dword [edi], ebx
-	add ebx, 0x1000
-	add edi, 8
-	loop setentry
+	; and put some sense into this PDPT - insert PDPTE
+	mov edi, PML4T_PHYSADDR+0x3000
+	add edi, ((STAGE2_VIRTADDR>>30)&0x01FF)*8
+	mov dword [edi], PML4T_PHYSADDR+0x4003 ; put PDE2M's @ PML4T+16kb
+	; PDE2M's
+	mov edi, PML4T_PHYSADDR+0x4000
+	add edi, ((STAGE2_VIRTADDR>>21)&0x01FF)*8
+	mov dword [edi], 1+2+128
 
 	; enable PAE
 	mov eax, cr4
@@ -442,7 +447,7 @@ setentry:
 	or eax, 1 << 31
 	mov cr0, eax
 
-;	lgdt [gdt]
+;	lgdt [gdt]	; not necessary
 	jmp Code64:initsegments64
 
 bits 64

@@ -1,6 +1,6 @@
 #ifndef KERN_CXX_API
 #define KERN_CXX_API
-#include "types.h"
+#include "types.hpp"
 
 extern "C" {
 

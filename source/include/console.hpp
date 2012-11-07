@@ -1,7 +1,7 @@
 #ifndef KERN_CONSOLE
 #define KERN_CONSOLE
 #include "stream.hpp"
-#include "types.h"
+#include "types.hpp"
 
 	class Console : public OStream
 	{
@@ -112,7 +112,11 @@
 			void set_indent(unsigned int nIndent)
 			{
 				if (nIndent<width)
+				{
+					if (!cursor_x || cursor_x==indent)
+						cursor_x=nIndent;
 					indent=nIndent;
+				}
 			}
 
 			virtual void print(const char* str) = 0;

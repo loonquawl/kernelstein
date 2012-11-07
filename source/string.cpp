@@ -57,16 +57,21 @@ int kvsprintf(char* str, const char* fmt, va_list v)
 					strpos+=kitoa(d,strpos,10);
 					fmt+=2;
 					break;
+				case 'u':
+					u = va_arg(v, unsigned long);
+					strpos+=kitoa(u,strpos,10);
+					fmt+=2;
+					break;
 				case 'o':
-					d = va_arg(v, long);
-					strpos+=kitoa(d,strpos,8);
+					u = va_arg(v, unsigned long);
+					strpos+=kitoa(u,strpos,8);
 					fmt+=2;
 					break;
 				case 'h':
-					d = va_arg(v, long);
+					u = va_arg(v, unsigned long);
 					*strpos++='0';
 					*strpos++='x';
-					strpos+=kitoa(d,strpos,16);
+					strpos+=kitoa(u,strpos,16);
 					fmt+=2;
 					break;
 				case 0:
@@ -85,31 +90,5 @@ int kvsprintf(char* str, const char* fmt, va_list v)
 	}
 	*strpos++=0;
 	return strpos-str;
-}
-
-int kitoa(long value, char* dest, long base)
-{
-	// time to get a reputation for writing messy code!
-
-	int digits=-1;
-
-	if (!base)
-		return 0;
-	if (!value)
-	{
-		*dest='0';
-		return 1;
-	}
-	if (value<0)
-		*dest++='-';
-	// it's either this or log10 on FPU or i'm dumb ^^
-	for (long i=value; i; i/=base, ++digits);
-	dest+=digits;
-	for (; value; value/=base)
-	{
-		char digit=abs(value)%base;
-		*dest-- = ((digit<10) ? '0' : 'a'-10) + digit;
-	}
-	return digits + (value<0) + 1;
 }
 

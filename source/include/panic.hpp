@@ -1,7 +1,7 @@
 #ifndef KERN_PANIC
 #define KERN_PANIC
 #include "globals.hpp"
-#include "types.h"
+#include "types.hpp"
 
 #define kpanic(reason)								\
 	{									\
@@ -26,6 +26,7 @@
 				:						\
 				: "%rax"					\
 		);								\
+		g_console	<< Console::Indent(0);				\
 		g_console 	<< Console::LIGHTRED						\
 				<< g_shodan 							\
 				<< Console::LIGHTCYAN						\

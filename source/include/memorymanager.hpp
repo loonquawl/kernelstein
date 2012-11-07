@@ -1,6 +1,6 @@
 #ifndef KERN_MEMORYMANAGER
 #define KERN_MEMORYMANAGER
-#include "types.h"
+#include "types.hpp"
 #include "stream.hpp"
 #include "console.hpp"
 
