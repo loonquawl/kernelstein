@@ -6,8 +6,8 @@ EMU = qemu-system-x86_64
 
 sourcedir	= source
 builddir	= build
-CCopts		= -pipe
-CPopts		= -pipe
+CCopts		= -pipe -Wno-packed-bitfield-compat
+CPopts		= -pipe -Wno-packed-bitfield-compat
 kernelopts	= -nostdlib -nostartfiles -nodefaultlibs -m64 -ffreestanding -O2 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb -mno-sse -mno-sse2 -mno-mmx -mno-3dnow
 ldopts		= --nostdlib
 ldoptsbin	= --oformat binary
@@ -47,3 +47,4 @@ gdb:
 clean:
 	rm $(builddir)/*
 	> $(builddir)/.keep
+

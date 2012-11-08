@@ -1,8 +1,8 @@
 %include "types.asm"
 %define SCREEN_SEGMENT		0xb800
 %define STAGE1_PHYSADDR		0x7c00
-%define STAGE2_PHYSADDR		0x8000
-%define STAGE2_VIRTADDR		0xb0bc47c0de00
+%define STAGE2_PHYSADDR		0x8000		; 11 LSB's are discarded when setting up paging
+%define STAGE2_VIRTADDR		0xb0bca7c0de
 %define BOOTLOADER_STACK	0x7bfe
 %define MEMMAP_PHYSADDR		0x0500
 %define PML4T_PHYSADDR		0x1000
@@ -412,7 +412,7 @@ setuppaging:
 	; PML4T
 	mov edi, cr3
 	mov dword [edi], PML4T_PHYSADDR+0x1003 ; map one PDPT to PML4+4kb
-	add edi, 0x1000 ; 512 8-byte entries
+	add edi, 0x1000 ; 512 8-byte entries in PML4T
 	; PDPT
 	mov dword [edi], PML4T_PHYSADDR+0x2003 ; map one PDE2M to PML4+8kb
 	add edi, 0x1000	; PML4+8kb
@@ -427,11 +427,12 @@ setuppaging:
 	; and put some sense into this PDPT - insert PDPTE
 	mov edi, PML4T_PHYSADDR+0x3000
 	add edi, ((STAGE2_VIRTADDR>>30)&0x01FF)*8
-	mov dword [edi], PML4T_PHYSADDR+0x4003 ; put PDE2M's @ PML4T+16kb
-	; PDE2M's
+	mov dword [edi], PML4T_PHYSADDR+0x4003 ; put PD @ PML4T+16kb
+	; PD containing PDE2M's
 	mov edi, PML4T_PHYSADDR+0x4000
 	add edi, ((STAGE2_VIRTADDR>>21)&0x01FF)*8
 	mov dword [edi], 1+2+128
+	mov dword [edi+4], STAGE2_PHYSADDR>>11	; whole structure is 8-byte wide
 
 	; enable PAE
 	mov eax, cr4

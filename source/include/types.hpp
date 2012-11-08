@@ -61,7 +61,7 @@
 			uint32_t physaddr		: 22;
 			uint16_t __ignored2		: 11;
 			uint8_t execute_disable		: 1;
-		};
+		} __attribute__((packed));
 	
 		// You may not like the way i name these, but it seems i'm
 		// through meditating about such mundane problems like
@@ -70,7 +70,7 @@
 		{
 			PDPTE	pointer_table;
 			PDPTE1G	page;
-		};
+		} __attribute__((packed));
 
 		// Page-Directory Entry (maps page table)
 		typedef PML4E PDE;
@@ -94,13 +94,13 @@
 			uint8_t __zero2			: 1;
 			uint16_t __ignored2		: 11;
 			uint8_t execute_disable		: 1;
-		};
+		} __attribute__((packed));
 
 		union uPDE
 		{
 			PDE	page_table;
 			PDE2M	page;
-		};
+		} __attribute__((packed));
 
 		// Page-Table Entry
 		struct PTE

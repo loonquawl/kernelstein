@@ -44,6 +44,7 @@ void EarlyKernelConsole::print(const char* str)
 			*console++=*str;
 			*console++=colorbyte;
 			advance_cursor();
+			console=get_cursor_address();
 		}
 		++str;
 	}
