@@ -2,10 +2,11 @@
 %define SCREEN_SEGMENT		0xb800
 %define STAGE1_PHYSADDR		0x7c00
 %define STAGE2_PHYSADDR		0x8000		; 11 LSB's are discarded when setting up paging
-%define STAGE2_VIRTADDR		0xb0bca7c0de
+%define STAGE2_VIRTADDR		0xb0bca70000
 %define BOOTLOADER_STACK	0x7bfe
 %define MEMMAP_PHYSADDR		0x0500
 %define PML4T_PHYSADDR		0x1000
+%define STAGE2_SIZE_IN_SECTORS	1024
 
 org STAGE1_PHYSADDR
 
@@ -38,7 +39,7 @@ stage1:
 	; load the kernel
 	mov ax, 3
 	mov bx, (STAGE1_PHYSADDR+1024)/16
-	mov cx, 1024				; 512kb
+	mov cx, STAGE2_SIZE_IN_SECTORS
 load_kern:
 	push 0					; offset
 	push bx					; segment
@@ -428,11 +429,20 @@ setuppaging:
 	mov edi, PML4T_PHYSADDR+0x3000
 	add edi, ((STAGE2_VIRTADDR>>30)&0x01FF)*8
 	mov dword [edi], PML4T_PHYSADDR+0x4003 ; put PD @ PML4T+16kb
-	; PD containing PDE2M's
+	; PD containing a PT
 	mov edi, PML4T_PHYSADDR+0x4000
 	add edi, ((STAGE2_VIRTADDR>>21)&0x01FF)*8
-	mov dword [edi], 1+2+128
-	mov dword [edi+4], STAGE2_PHYSADDR>>11	; whole structure is 8-byte wide
+	mov dword [edi], PML4T_PHYSADDR+0x5003
+	; and some PTE's
+	mov eax, STAGE2_PHYSADDR + 3
+	mov ecx, STAGE2_SIZE_IN_SECTORS/8 + 1	; yields number of pages needed by stage2
+	mov edi, PML4T_PHYSADDR+0x5000
+	add edi, ((STAGE2_VIRTADDR>>12)&0x01FF)*8
+setupPTE:
+	stosd
+	add edi, 4
+	add eax, 0x1000
+	loop setupPTE
 
 	; enable PAE
 	mov eax, cr4
@@ -472,7 +482,7 @@ initsegments64:
 
 
 jumptokernel:
-	call 0x8000
+	call STAGE2_VIRTADDR
 	hlt
 
 zeropadding2:

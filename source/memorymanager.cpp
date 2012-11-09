@@ -93,7 +93,7 @@ void MemoryManager::print_pagetree(Console& output)
 								if (page_table_4K->present)
 								{	
 									output << " -> PML4E#" << pml4i << " (@" << HexStr((unsigned long)(pml4_entry)) << ") PDPTE#" << pdpti << " (@" << HexStr((unsigned long)(pdpt_entry)) << ") PDE#" << pdei << " (@" << HexStr((unsigned long)(pd_entry)) << ") PTE#" << ptei << " (@" << HexStr((unsigned long)(page_table_4K)) << ") -> 4K page\n";
-									output << " Which maps [" << HexStr(pte_range_start) << "-" << HexStr(pte_range_end) << "] to [" << HexStr(page_table_4K->physaddr) << "-" << HexStr(page_table_4K->physaddr+fourkb) << "]\n";
+									output << " Which maps [" << HexStr(pte_range_start) << "-" << HexStr(pte_range_end) << "] to [" << HexStr(page_table_4K->physaddr*0x1000) << "-" << HexStr(page_table_4K->physaddr*0x1000+fourkb) << "]\n";
 									print_PTE(page_table_4K,output);
 								}
 							}

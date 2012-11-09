@@ -1,6 +1,6 @@
 SECTIONS
 {
-	kernel 0x8000:
+	kernel 0xb0bca70000:
 	{
 		entry = .;
 		*(.text.kernelentry)

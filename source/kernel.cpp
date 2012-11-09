@@ -12,8 +12,7 @@ void kernelentry()
 	kconstruct_globals();
 	MemoryManager::print_pagetree(g_console);
 
-	kclihlt();
-	unsigned long* ptr=(unsigned long*)(0xb0bca7c0de);
+	unsigned long* ptr=(unsigned long*)(0xb0bca70000);
 	for (; !*ptr; ++ptr);
 	g_console << HexStr((unsigned long)(ptr)) << "\t" << HexStr(*ptr) << "\t";
 }

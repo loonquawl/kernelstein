@@ -1,5 +1,5 @@
-LD = ld
-CC = gcc
+LD = x86_64-unknown-elf-ld
+CC = x86_64-unknown-elf-gcc
 CP = g++
 AS = nasm
 EMU = qemu-system-x86_64
@@ -13,7 +13,7 @@ ldopts		= --nostdlib
 ldoptsbin	= --oformat binary
 emuopts		= 
 
-kernelobjects	= $(sourcedir)/*.cpp
+kernelobjects	= $(wildcard $(sourcedir)/*.cpp)
 
 all: image.bin kernel_relocated.o
 
