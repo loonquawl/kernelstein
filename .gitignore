@@ -1,5 +1,6 @@
 build/*.o
 build/*.bin
 build/*.map
+build/
 *.swp
 
