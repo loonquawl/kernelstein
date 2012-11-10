@@ -183,3 +183,29 @@ void MemoryManager::print_PTE(Paging::PTE* e, OStream& output)
 		<< " " << HexStr(e->physaddr*0x1000) << "\n";
 }
 
+void MemoryManager::map4K(uint64_t virtual_begin, uint64_t physical_begin, const PTE* page_flags)
+{
+	PML4E*	const	pml4e=PML4T+((virtual_begin>>39)&0x1FF);
+	PDPTE*	const	pdpte=(PDPTE*)(pml4e->physaddr)+((virtual_begin>>30)&0x1FF);
+	PDE*	const	pde=(PDE*)(pdpte->physaddr)+((virtual_begin>>21)&0x1FF);
+	PTE*		pte=(PTE*)(pde->physaddr);
+
+	kmemcpy((char*)(pte),(const char*)(page_flags),sizeof(*pte));
+	pte->physaddr=physical_begin;
+}
+
+void MemoryManager::map2M(uint64_t virtual_begin, uint64_t physical_begin, const PDE2M* page_flags)
+{
+
+}
+
+void MemoryManager::map1G(uint64_t virtual_begin, uint64_t physical_begin, const PDPTE1G* page_flags)
+{
+
+}
+
+void MemoryManager::map(uint64_t virtual_begin, uint64_t physical_begin, size_t length)
+{
+	
+}
+

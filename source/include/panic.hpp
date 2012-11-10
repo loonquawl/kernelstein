@@ -15,10 +15,12 @@
 				 movq	%%rbp,40+0x7c00;			\
 				 movq	%%rsi,48+0x7c00;			\
 				 movq	%%rdi,56+0x7c00;			\
-				 movw	%%cs,72+0x7c00;				\
-				 movw	%%ds,74+0x7c00;				\
+				 leaq	(%%rip),%%rax;				\
+				 movq	%%rax,64+0x7c00;			\
+				 movq	%%cr3,%%rax;				\
+				 movq	%%rax,72+0x7c00;			\
 				 movq	%%rsp,%%rax;				\
-				 movq	$0x7c00+76,%%rsp;			\
+				 movq	$0x7c00+80,%%rsp;			\
 				 pushfq;					\
 				 movq	%%rax, %%rsp				\
 				"						\
@@ -43,9 +45,9 @@
 				<< " RBP:\t"  << *(uint64_t*)(0x7c00+40) << "\n"	\
 				<< " RSI:\t"  << *(uint64_t*)(0x7c00+48) << "\n"	\
 				<< " RDI:\t"  << *(uint64_t*)(0x7c00+56) << "\n"	\
-				<< " CS: \t"  << *(uint16_t*)(0x7c00+72) << "\n"	\
-				<< " DS: \t"  << *(uint16_t*)(0x7c00+74) << "\n"	\
-				<< " RFLAGS:\t"  << *(uint64_t*)(0x7c00+76) << "\n\n";	\
+				<< " RIP:\t"  << *(uint64_t*)(0x7c00+64) << "\n"	\
+				<< " CR3:\t"  << *(uint64_t*)(0x7c00+72) << "\n"	\
+				<< " RFLAGS:\t"  << *(uint64_t*)(0x7c00+80) << "\n\n";	\
 		uint8_t* stack=*(uint8_t**)(0x7c00+32);				\
 		uint8_t* stack_end=stack+64;						\
 		g_console << "@RSP:\n";						\

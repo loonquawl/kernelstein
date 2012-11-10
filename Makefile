@@ -1,5 +1,5 @@
-LD = x86_64-unknown-elf-ld
-CC = x86_64-unknown-elf-gcc
+LD = ld
+CC = gcc
 CP = g++
 AS = nasm
 EMU = qemu-system-x86_64
@@ -8,7 +8,7 @@ SOURCEDIR	= source
 BUILDDIR	= build
 CFLAGS		= -pipe -Wno-packed-bitfield-compat
 CPFLAGS		= -pipe -Wno-packed-bitfield-compat
-KERNELFLAGS	= -nostdlib -nostartfiles -nodefaultlibs -m64 -ffreestanding -O2 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb -mno-sse -mno-sse2 -mno-mmx -mno-3dnow
+KERNELFLAGS	= -nostdlib -nostartfiles -nodefaultlibs -m64 -ffreestanding -O2 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -mcmodel=large
 LDFLAGS		= --nostdlib
 LDFLAGSBIN	= --oformat binary
 EMUFLAGS	= 

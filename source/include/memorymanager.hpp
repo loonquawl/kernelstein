@@ -35,6 +35,11 @@
 			static void print_PDE(Paging::PDE*, OStream& output);
 			static void print_PDE2M(Paging::PDE2M*, OStream& output);
 			static void print_PTE(Paging::PTE*, OStream& output);
+
+			static void map4K(uint64_t virt_begin, uint64_t phys_begin, const Paging::PTE* page_flags);
+			static void map2M(uint64_t virt_begin, uint64_t phys_begin, const Paging::PDE2M* page_flags);
+			static void map1G(uint64_t virt_begin, uint64_t phys_begin, const Paging::PDPTE1G* page_flags);
+			static void map(uint64_t virt_begin, uint64_t phys_begin, size_t length);
 	};
 
 #endif

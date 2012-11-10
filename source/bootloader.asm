@@ -480,9 +480,9 @@ initsegments64:
 ;	add rax, rbx
 ;	mov [rax], 0xb
 
-
 jumptokernel:
-	call STAGE2_VIRTADDR
+	mov rax, STAGE2_VIRTADDR
+	call rax
 	hlt
 
 zeropadding2:
