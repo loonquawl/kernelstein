@@ -188,7 +188,10 @@ PTE* MemoryManager::map4K(uint64_t virtual_begin, uint64_t physical_begin, const
 	PML4E*	const	pml4e=PML4T+((virtual_begin>>39)&0x1FF);
 	if (!pml4e->present)
 	{
-		KCOPY_PAGE_DIRECTORY_FLAGS(page_directory,page_flags);
+		PDPTE* new_pdpte=new PDPTE;
+		pml4e->physaddr=(unsigned int)(new_pdpte);
+		KCOPY_PAGE_DIRECTORY_FLAGS(pml4e,page_flags);
+
 	}
 	PDPTE*	const	pdpte=(PDPTE*)(pml4e->physaddr)+((virtual_begin>>30)&0x1FF);
 	PDE*	const	pde=(PDE*)(pdpte->physaddr)+((virtual_begin>>21)&0x1FF);

@@ -30,15 +30,6 @@
 
 	class MemoryManager
 	{
-		public:
-
-			enum PageSize
-			{
-				P4K,
-				P2M,
-				P1G
-			};			
-
 		protected:
 
 			MemoryManager() {}
