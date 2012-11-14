@@ -34,7 +34,7 @@
 				<< Console::LIGHTCYAN						\
 				<< "\n"								\
 				<< " Kernel panic at " __FILE__ << ", line " << __LINE__ << ".\n"	\
-				<< " Reason:\t" << (reason) << "\n\n"				\
+				<< " Reason:\t" << #reason << "\n\n"				\
 				<< Console::LIGHTBLUE						\
 				<< Console::HEX							\
 				<< " RAX:\t"  << *(uint64_t*)(0x7c00) << "\n"	\

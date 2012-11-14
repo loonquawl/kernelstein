@@ -11,7 +11,6 @@ void kernelentry()
 {
 //	kclihlt();
 	kconstruct_globals();
-	kpanic("panic test");
 	ASSERT(*(uint64_t*)(0xabcd)==0xbeef);
 	MemoryManager::print_pagetree(g_console);
 

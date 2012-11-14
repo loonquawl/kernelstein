@@ -122,6 +122,20 @@
 			uint8_t	execute_disable		: 1;
 		} __attribute__((packed));
 
+		struct PageFlags
+		{
+			uint8_t	present			: 1;
+			uint8_t	rw			: 1;
+			uint8_t	supervisor		: 1;
+			uint8_t	write_through		: 1;
+			uint8_t	cache_disable		: 1;
+			uint8_t	accessed		: 1;
+			uint8_t	dirty			: 1;
+			uint8_t	PAT			: 1;
+			uint8_t	global			: 1;
+			uint8_t	execute_disable		: 1;
+		}
+
 	};
 	
 #endif

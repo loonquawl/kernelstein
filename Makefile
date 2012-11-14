@@ -11,7 +11,7 @@ CPFLAGS		= -pipe -Wno-packed-bitfield-compat
 KERNELFLAGS	= -nostdlib -nostartfiles -nodefaultlibs -m64 -ffreestanding -O2 -combine -Wl,-r -fno-rtti -fno-exceptions -nostdinc++ -ffunction-sections -fno-threadsafe-statics -Wabi -ggdb -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -mcmodel=large
 LDFLAGS		= --nostdlib
 LDFLAGSBIN	= --oformat binary
-EMUFLAGS	= 
+EMUFLAGS	= --no-kvm 
 
 OBJECTS		= $(wildcard $(SOURCEDIR)/*.cpp $(SOURCEDIR)/*.c)
 

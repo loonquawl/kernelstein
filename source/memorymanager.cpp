@@ -183,29 +183,84 @@ void MemoryManager::print_PTE(Paging::PTE* e, OStream& output)
 		<< " " << HexStr(e->physaddr*0x1000) << "\n";
 }
 
-void MemoryManager::map4K(uint64_t virtual_begin, uint64_t physical_begin, const PTE* page_flags)
+PTE* MemoryManager::map4K(uint64_t virtual_begin, uint64_t physical_begin, const PageFlags* page_flags)
+{
+	PML4E*	const	pml4e=PML4T+((virtual_begin>>39)&0x1FF);
+	if (!pml4e->present)
+	{
+		KCOPY_PAGE_DIRECTORY_FLAGS(page_directory,page_flags);
+	}
+	PDPTE*	const	pdpte=(PDPTE*)(pml4e->physaddr)+((virtual_begin>>30)&0x1FF);
+	PDE*	const	pde=(PDE*)(pdpte->physaddr)+((virtual_begin>>21)&0x1FF);
+	PTE*	const	pte=(PTE*)(pde->physaddr);
+
+	kmemset((char*)(pte),0,sizeof(*pte));
+	KCOPY_PAGE_FLAGS(pte,page_flags);
+	pte->physaddr=physical_begin;
+	return pte;
+}
+
+PDE2M* MemoryManager::map2M(uint64_t virtual_begin, uint64_t physical_begin, const PageFlags* page_flags)
 {
 	PML4E*	const	pml4e=PML4T+((virtual_begin>>39)&0x1FF);
 	PDPTE*	const	pdpte=(PDPTE*)(pml4e->physaddr)+((virtual_begin>>30)&0x1FF);
-	PDE*	const	pde=(PDE*)(pdpte->physaddr)+((virtual_begin>>21)&0x1FF);
-	PTE*		pte=(PTE*)(pde->physaddr);
-
-	kmemcpy((char*)(pte),(const char*)(page_flags),sizeof(*pte));
-	pte->physaddr=physical_begin;
-}
-
-void MemoryManager::map2M(uint64_t virtual_begin, uint64_t physical_begin, const PDE2M* page_flags)
-{
-
-}
-
-void MemoryManager::map1G(uint64_t virtual_begin, uint64_t physical_begin, const PDPTE1G* page_flags)
-{
-
-}
-
-void MemoryManager::map(uint64_t virtual_begin, uint64_t physical_begin, size_t length)
-{
+	PDE2M*	const	pde=(PDE*)(pdpte->physaddr)+((virtual_begin>>21)&0x1FF);
 	
+	kmemset((char*)(pde),0,sizeof(*pde));
+	KCOPY_PAGE_FLAGS(pde,page_flags);
+	pde->physaddr=physical_begin;
+	return pde;
+}
+
+PDPTE1G* MemoryManager::map1G(uint64_t virtual_begin, uint64_t physical_begin, const PageFlags* page_flags)
+{
+	PML4E*		const	pml4e=PML4T+((virtual_begin>>39)&0x1FF);
+	PDPTE1G*	const	pdpte=(PDPTE*)(pml4e->physaddr)+((virtual_begin>>30)&0x1FF);
+
+	kmemset((char*)(pdpte),0,sizeof(*pdpte));
+	KCOPY_PAGE_FLAGS(pdpte,page_flags);
+	pdpte->physaddr=physical_begin;
+	return pdpte;
+}
+
+void MemoryManager::map(uint64_t virtual_begin, uint64_t physical_begin, size_t length, const PageFlags* page_flags)
+{
+	const uint16_t four_kilobytes=0x1000;
+	const uint32_t two_megabytes=512*four_kilobytes;
+	const uint32_t one_gigabyte=512*two_megabytes;
+	while(length>0)
+	{
+		if (length>=one_gigabyte)
+		{
+			PDPTE1G* page=map1G(virtual_begin,physical_begin,one_gigabyte);
+			KCOPY_PAGE_FLAGS(page,page_flags);
+			length-=one_gigabyte;
+			virtual_begin+=one_gigabyte;
+			physical_begin+=one_gigabyte;
+		}
+		else if (length>=two_megabytes)
+		{
+			PDE2M* page=map2M(virtual_begin,physical_begin,two_megabytes);
+			KCOPY_PAGE_FLAGS(page,page_flags);
+			length-=two_megabytes;
+			virtual_begin+=two_megabytes;
+			physical_begin+=two_megabytes;
+		}
+		else
+		{
+			PTE* page=map4K(virtual_Begin,physical_begin,four_kilobytes);
+			KCOPY_PAGE_FLAGS(page,page_flags);
+			if (length>four_kilobytes)
+			{
+				length-=four_kilobytes;
+				virtual_begin+=four_kilobytes;
+				physical_begin+=four_kilobytes;
+			}
+			else
+			{
+				length=0;
+			}
+		}
+	}
 }
 

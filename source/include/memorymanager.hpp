@@ -4,6 +4,30 @@
 #include "stream.hpp"
 #include "console.hpp"
 
+#define KCOPY_PAGE_FLAGS(page,page_flags)	\
+			{			\
+				page->present		= page_flags->present;		\
+				page->rw		= page_flags->rw;		\
+				page->supervisor	= page_flags->supervisor;	\
+				page->write_through	= page_flags->write_through;	\
+				page->cache_disable	= page_flags->cache_disable;	\
+				page->accessed		= page_flags->accessed;		\
+				page->dirty		= page_flags->dirty;		\
+				page->PAT		= page_flags->PAT;		\
+				page->global		= page_flags->global;		\
+				page->execute_disable	= page_flags->execute_disable;	\
+			}
+
+#define KCOPY_PAGE_DIRECTORY_FLAGS(page_directory,page_flags)	\
+			{					\
+				page_directory->present		= page_flags->present;		\
+				page_directory->rw		= page_flags->rw;		\
+				page_directory->supervisor	= page_flags->supervisor;	\
+				page_directory->write_through	= page_flags->write_through;	\
+				page_directory->cache_disable	= page_flags->cache_disable;	\
+				page_directory->accessed	= page_flags->accessed;		\
+			}
+
 	class MemoryManager
 	{
 		public:
