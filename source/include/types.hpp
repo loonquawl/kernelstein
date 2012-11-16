@@ -135,7 +135,6 @@
 			uint8_t	global			: 1;
 			uint8_t	execute_disable		: 1;
 		}
-
 	};
 	
 #endif

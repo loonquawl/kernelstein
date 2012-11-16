@@ -281,3 +281,34 @@ void MemoryManager::map(uint64_t virtual_begin, uint64_t physical_begin, size_t 
 	}
 }
 
+Paging::PML4E* allocPML4(const Paging::PageFlags* page_flags)
+{
+}
+
+Paging::PDPTE* allocPDPT(const Paging::PageFlags* page_flags)
+{
+	PDPTE* new_pdpt=new PDPTE[512];
+	kmemset((char*)(new_pdpt),0,sizeof(PDPTE)*512);
+	pml4e->physaddr=(unsigned int)(new_pdpt);
+	KCOPY_PAGE_DIRECTORY_FLAGS(pml4e,page_flags);
+	return new_pdpt;
+}
+
+Paging::PDE* allocPD(const Paging::PageFlags* page_flags)
+{
+	PDE* new_pd=new PDE[512];
+	kmemset((char*)(new_pdpt),0,sizeof(PDE)*512);
+	pdpte->physaddr=(unsigned int)(new_pd);
+	KCOPY_PAGE_DIRECTORY_FLAGS(pdpte,page_flags);
+	return new_pd;
+}
+
+Paging::PTE* allocPT(const Paging::PageFlags* page_flags)
+{
+	PTE* new_pt=new PTE[512];
+	kmemset((char*)(new_pdpt),0,sizeof(PTE)*512);
+	pde->physaddr=(unsigned int)(new_pt);
+	KCOPY_PAGE_DIRECTORY_FLAGS(pdpte,page_flags);
+	return new_pt;
+}
+
