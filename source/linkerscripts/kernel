@@ -10,21 +10,15 @@ SECTIONS
 		*(.data*)
 		*(.rodata*)
 		*(.bss*)
-	} = 0x0
-
-	ctable ALIGN(8) : 
-	{
 		constructor_table = .;
 		*(.ctors*)
 		constructor_table_end = .;
-	}
-
-	dtable ALIGN(8) :
-	{
 		destructor_table = .;
-		*(.dtors)
+		*(.dtors*)
 		destructor_table_end = .;
-	}
+		here_be_dragons = .;
+
+	} = 0x0
 
 	/DISCARD/ :
 	{

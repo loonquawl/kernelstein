@@ -10,3 +10,8 @@
 
 #endif
 
+#define COMPILE_ASSERT(condition)			\
+	#if (condition)					\
+		#error "Failed assert" ## condition	\
+	#endif
+

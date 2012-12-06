@@ -11,11 +11,6 @@ void kernelentry()
 {
 //	kclihlt();
 	kconstruct_globals();
-	ASSERT(*(uint64_t*)(0xabcd)==0xbeef);
 	MemoryManager::print_pagetree(g_console);
-
-	unsigned long* ptr=(unsigned long*)(0xb0bca70000);
-	for (; !*ptr; ++ptr);
-	g_console << HexStr((unsigned long)(ptr)) << "\t" << HexStr(*ptr) << "\t";
 }
 

@@ -1,4 +1,5 @@
 #include "console.hpp"
+#include "types.hpp"
 
 EarlyKernelConsole	g_console;
 
