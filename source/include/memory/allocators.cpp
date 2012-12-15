@@ -21,7 +21,7 @@ void BuddyAllocator::Buddy::nextFreePage(int8_t& map_qword_num, int8_t& qword_bi
 	uint64_t*	map_qwordptr=m_pagemap;
 	uint64_t*	map_endptr=m_pagemap+8;
 	for (; map_qwordptr<map_endptr && !~*map_qwordptr; ++map_qwordptr);
-	// If every page is allocated
+	// If every page is allocated already
 	if (!~*map_qwordptr && map_qwordptr==map_endptr-1)
 	{
 		map_qword_num=-1;
